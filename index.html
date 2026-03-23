@@ -504,8 +504,8 @@
     <p><strong>Option 1 — GitHub Pages (free):</strong> Push this HTML file to a GitHub repo → Settings → Pages → Deploy from main. URL: <code>https://username.github.io/market-tracker</code></p>
     <p><strong>Option 2 — Netlify (free, drag-drop):</strong> Go to <code>netlify.com</code> → drag this file → live in 30 seconds. Auto HTTPS included.</p>
     <p><strong>Option 3 — Vercel (free):</strong> <code>npx vercel --prod</code> in the folder. Fastest CDN globally.</p>
-    <p><strong>API used:</strong> Yahoo Finance via <code>allorigins.win</code> CORS proxy — free, no API key needed. For production, consider <code>Alpha Vantage</code> or <code>Finnhub</code> free tiers for more reliable data.</p>
-    <p><strong>To add your own API key:</strong> Replace the <code>PROXY_URL</code> constant at the top of the script with a direct Yahoo Finance endpoint or Finnhub endpoint.</p>
+    <p><strong>API used:</strong> <strong>Finnhub</strong> (primary — 100 calls/min, no CORS issues) for all symbols except India VIX. <strong>Yahoo Finance via allorigins proxy</strong> used only for India VIX (not available on Finnhub).</p>
+    <p><strong>Data sources:</strong> Nifty/Sensex/BankNifty via Finnhub indices · Gold/Silver/Brent/WTI via OANDA forex · DXY via OANDA · India VIX via Yahoo Finance proxy.</p>
   </div>
 
 </div><!-- end container -->
@@ -514,23 +514,35 @@
 // ═══════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════
-const PROXY = 'https://api.allorigins.win/get?url=';
+// ═══════════════════════════════════════
+// API CONFIG — Finnhub (primary) + Yahoo proxy (VIX only)
+// ═══════════════════════════════════════
+const FINNHUB_KEY = 'd70g6d1r01qtb4ralh30d70g6d1r01qtb4ralh3g';
+const FINNHUB = 'https://finnhub.io/api/v1/quote?token=' + FINNHUB_KEY + '&symbol=';
+
+// Yahoo Finance proxy — only used for India VIX (not on Finnhub)
+const YF_PROXY = 'https://api.allorigins.win/get?url=';
 const YF = 'https://query1.finance.yahoo.com/v8/finance/chart/';
 
-const SYMBOLS = {
-  nifty:     { sym: '%5ENSEI',    id: 'nifty',     label: 'Nifty 50' },
-  sensex:    { sym: '%5EBSESN',   id: 'sensex',    label: 'Sensex' },
-  banknifty: { sym: '%5ENSENEXT', id: 'banknifty', label: 'Bank Nifty' },
-  vix:       { sym: '%5EINDIAVIX',id: 'vix',       label: 'India VIX' },
-  sp500:     { sym: '%5EGSPC',    id: 'sp500',     label: 'S&P 500' },
-  nasdaq:    { sym: '%5EIXIC',    id: 'nasdaq',    label: 'Nasdaq' },
-  dow:       { sym: '%5EDJI',     id: 'dow',       label: 'Dow Jones' },
-  usdinr:    { sym: 'USDINR%3DX', id: 'usdinr',    label: 'USD/INR' },
-  gold:      { sym: 'GC%3DF',     id: 'gold',      label: 'Gold' },
-  silver:    { sym: 'SI%3DF',     id: 'silver',    label: 'Silver' },
-  brent:     { sym: 'BZ%3DF',     id: 'brent',     label: 'Brent Crude' },
-  wti:       { sym: 'CL%3DF',     id: 'wti',       label: 'WTI Crude' },
-  dxy:       { sym: 'DX-Y.NYB',   id: 'dxy',       label: 'DXY' },
+// Finnhub symbols — all except VIX
+const FH_SYMBOLS = {
+  nifty:     { sym: 'BSE:SENSEX',  id: 'nifty',     label: 'Nifty 50',    fhSym: '^NSEI' },
+  sensex:    { sym: 'BSE:SENSEX',  id: 'sensex',     label: 'Sensex',      fhSym: '^BSESN' },
+  banknifty: { sym: '^NSEBANK',    id: 'banknifty',  label: 'Bank Nifty',  fhSym: '^NSEBANK' },
+  sp500:     { sym: '^GSPC',       id: 'sp500',      label: 'S&P 500',     fhSym: '^GSPC' },
+  nasdaq:    { sym: '^IXIC',       id: 'nasdaq',     label: 'Nasdaq',      fhSym: '^IXIC' },
+  dow:       { sym: '^DJI',        id: 'dow',        label: 'Dow Jones',   fhSym: '^DJI' },
+  usdinr:    { sym: 'OANDA:USD_INR',id:'usdinr',     label: 'USD/INR',     fhSym: 'OANDA:USD_INR' },
+  gold:      { sym: 'OANDA:XAU_USD',id:'gold',       label: 'Gold',        fhSym: 'OANDA:XAU_USD' },
+  silver:    { sym: 'OANDA:XAG_USD',id:'silver',     label: 'Silver',      fhSym: 'OANDA:XAG_USD' },
+  brent:     { sym: 'OANDA:BCO_USD',id:'brent',      label: 'Brent Crude', fhSym: 'OANDA:BCO_USD' },
+  wti:       { sym: 'OANDA:USOIL', id: 'wti',        label: 'WTI Crude',   fhSym: 'OANDA:USOIL' },
+  dxy:       { sym: 'OANDA:USD_COMP',id:'dxy',       label: 'DXY',         fhSym: 'OANDA:USD_COMP' },
+};
+
+// Yahoo-only symbols
+const YF_SYMBOLS = {
+  vix: { sym: '%5EINDIAVIX', id: 'vix', label: 'India VIX' },
 };
 
 let data = {};
@@ -563,13 +575,33 @@ setInterval(updateClock, 1000);
 updateClock();
 
 // ═══════════════════════════════════════
-// FETCH SINGLE SYMBOL
+// FETCH — FINNHUB (primary)
 // ═══════════════════════════════════════
-async function fetchSymbol(sym) {
-  const url = `${YF}${sym}?interval=1d&range=5d`;
-  const proxyUrl = `${PROXY}${encodeURIComponent(url)}`;
+async function fetchFinnhub(symbol) {
   try {
-    const res = await fetch(proxyUrl, { timeout: 8000 });
+    const res = await fetch(FINNHUB + encodeURIComponent(symbol));
+    if (!res.ok) return null;
+    const json = await res.json();
+    // Finnhub quote: c=current, pc=prev close, d=change, dp=change%
+    if (!json.c || json.c === 0) return null;
+    const price = json.c;
+    const prev = json.pc;
+    const chgPct = json.dp || (prev ? ((price - prev) / prev) * 100 : 0);
+    const chgAbs = json.d || (price - prev);
+    return { price, prev, chgPct, chgAbs, symbol, source: 'finnhub' };
+  } catch (e) {
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════
+// FETCH — YAHOO PROXY (VIX only)
+// ═══════════════════════════════════════
+async function fetchYahoo(sym) {
+  const url = YF + sym + '?interval=1d&range=5d';
+  const proxyUrl = YF_PROXY + encodeURIComponent(url);
+  try {
+    const res = await fetch(proxyUrl);
     const json = await res.json();
     const parsed = JSON.parse(json.contents);
     const q = parsed?.chart?.result?.[0];
@@ -579,14 +611,14 @@ async function fetchSymbol(sym) {
     const prev = meta.previousClose || meta.chartPreviousClose;
     const chgPct = prev ? ((price - prev) / prev) * 100 : 0;
     const chgAbs = price - prev;
-    return { price, prev, chgPct, chgAbs, symbol: sym };
+    return { price, prev, chgPct, chgAbs, symbol: sym, source: 'yahoo' };
   } catch (e) {
     return null;
   }
 }
 
 // ═══════════════════════════════════════
-// FETCH ALL
+// FETCH ALL — dual source
 // ═══════════════════════════════════════
 async function fetchAll(manual = false) {
   const btn = document.getElementById('refresh-btn');
@@ -598,28 +630,43 @@ async function fetchAll(manual = false) {
   dot.className = 'status-dot';
   statusText.textContent = 'Fetching...';
 
-  const keys = Object.keys(SYMBOLS);
-  const results = await Promise.allSettled(
-    keys.map(k => fetchSymbol(SYMBOLS[k].sym))
+  // Fetch all Finnhub symbols in parallel
+  const fhKeys = Object.keys(FH_SYMBOLS);
+  const fhResults = await Promise.allSettled(
+    fhKeys.map(k => fetchFinnhub(FH_SYMBOLS[k].fhSym))
   );
 
+  // Fetch VIX from Yahoo proxy
+  const vixResult = await fetchYahoo(YF_SYMBOLS.vix.sym);
+
   let successCount = 0;
-  results.forEach((res, i) => {
-    const key = keys[i];
+
+  // Process Finnhub results
+  fhResults.forEach((res, i) => {
+    const key = fhKeys[i];
     if (res.status === 'fulfilled' && res.value) {
       data[key] = res.value;
       successCount++;
     }
   });
 
+  // Process VIX
+  if (vixResult) {
+    data.vix = vixResult;
+    successCount++;
+  }
+
+  const totalSymbols = fhKeys.length + 1; // +1 for VIX
   btn.classList.remove('loading');
   document.getElementById('refresh-icon').textContent = '⟳';
 
   if (successCount > 0) {
     fetchErrors = 0;
     dot.className = 'status-dot';
-    statusText.textContent = `Live · ${successCount}/${keys.length} feeds`;
-    document.getElementById('last-fetched').textContent = `Updated ${new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })}`;
+    const vixStatus = vixResult ? '' : ' · VIX unavailable';
+    statusText.textContent = `Live · ${successCount}/${totalSymbols} feeds${vixStatus}`;
+    document.getElementById('last-fetched').textContent =
+      `Updated ${new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })} · Finnhub + Yahoo (VIX)`;
     updateUI();
   } else {
     fetchErrors++;
