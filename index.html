@@ -166,17 +166,20 @@
 <body>
 <div class="container">
 
-  <!-- ═══ HEADER ═══ -->
+  <!-- HEADER -->
   <div class="header">
     <div class="header-left">
       <h1>📡 Market Command Centre</h1>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap">
-        <div style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)">
+      <div style="display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap;font-size:12px;color:var(--muted)">
+        <div style="display:flex;align-items:center;gap:5px">
           <div class="status-dot" id="status-dot"></div>
           <span id="status-text">Connecting...</span>
         </div>
-        <span style="color:var(--muted);font-size:12px" id="clock">--:--:-- IST</span>
-        <span style="color:var(--muted);font-size:12px" id="last-fetched">Not yet fetched</span>
+        <span id="clock">--:--:-- IST</span>
+        <span>·</span>
+        <span id="last-fetched">Not yet fetched</span>
+        <span>·</span>
+        <span>Auto-refresh 30s market hours</span>
       </div>
     </div>
     <button class="refresh-btn" onclick="fetchAll(true)" id="refresh-btn">
@@ -184,24 +187,23 @@
     </button>
   </div>
 
-  <!-- ═══ SECTION 1: VERDICT — THE MAIN EVENT ═══ -->
-  <div style="margin-bottom:12px">
+  <!-- ① VERDICT — FIRST THING YOU SEE -->
+  <div style="margin-bottom:16px">
     <div class="section-title">🎯 Today's decision</div>
     <div class="verdict red" id="verdict-banner" style="font-size:15px;padding:16px 20px;margin-bottom:8px">
-      <span class="verdict-icon" id="verdict-icon">⛔</span>
+      <span id="verdict-icon">⛔</span>
       <span id="verdict-text">Analysing market conditions...</span>
     </div>
     <div class="info-box amber" id="equity-context">Loading market context...</div>
   </div>
 
-  <!-- ═══ SECTION 2: BUY SIGNALS — NIFTY + GOLD ═══ -->
+  <!-- ② BUY SIGNALS — NIFTY + GOLD SIDE BY SIDE -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
-    <!-- Nifty signals -->
     <div>
       <div class="section-title">📊 Nifty dip-buy checklist</div>
       <div class="signal-box">
         <div class="signal-row"><span class="signal-label">Fall ≥ 2% today?</span><span class="badge" id="sig-fall">—</span></div>
-        <div class="signal-row"><span class="signal-label">Broad-based?</span><span class="badge badge-red">⚠ US-Iran war active</span></div>
+        <div class="signal-row"><span class="signal-label">Broad-based?</span><span class="badge badge-red" id="sig-broad">⚠ US-Iran war active</span></div>
         <div class="signal-row"><span class="signal-label">After 1:00 PM IST?</span><span class="badge" id="sig-time">—</span></div>
         <div class="signal-row"><span class="signal-label">Nifty above 22,800?</span><span class="badge" id="sig-level">—</span></div>
         <div class="signal-row"><span class="signal-label">Brent below $105?</span><span class="badge" id="sig-oil">—</span></div>
@@ -211,7 +213,6 @@
         </div>
       </div>
     </div>
-    <!-- Gold signals -->
     <div>
       <div class="section-title">🥇 Gold dip-buy checklist</div>
       <div class="signal-box">
@@ -220,6 +221,7 @@
         <div class="signal-row"><span class="signal-label">RSI oversold (&lt;35)?</span><span class="badge badge-green">✓ ~33</span></div>
         <div class="signal-row"><span class="signal-label">Brent below $100?</span><span class="badge" id="sig-brent">—</span></div>
         <div class="signal-row"><span class="signal-label">CB buying active?</span><span class="badge badge-green">✓ Record pace</span></div>
+        <div class="signal-row"><span class="signal-label">Fed pivot signal?</span><span class="badge badge-red">⚠ Zero cuts — not yet</span></div>
         <div class="signal-row" style="border-top:1px solid var(--border2);padding-top:6px;margin-top:2px">
           <span class="signal-label"><strong>Gold deploy</strong></span>
           <span class="badge" id="sig-gold-verdict">—</span>
@@ -228,7 +230,7 @@
     </div>
   </div>
 
-  <!-- ═══ SECTION 3: KEY PRICES ═══ -->
+  <!-- ③ KEY PRICES -->
   <div class="section-title">📈 Key prices</div>
   <div class="metric-grid" style="margin-bottom:20px">
     <div class="metric-card highlight"><div class="metric-label">Nifty 50</div><div class="metric-val" id="v-nifty">—</div><div class="metric-chg" id="c-nifty">—</div></div>
@@ -242,12 +244,14 @@
     <div class="metric-card"><div class="metric-label">Silver (USD)</div><div class="metric-val" id="v-silver">—</div><div class="metric-chg" id="c-silver">—</div></div>
     <div class="metric-card"><div class="metric-label">WTI Crude</div><div class="metric-val" id="v-wti2">—</div><div class="metric-chg" id="c-wti2">US benchmark</div></div>
     <div class="metric-card"><div class="metric-label">MCX Gold (/10g)</div><div class="metric-val" id="v-mcxgold">—</div><div class="metric-chg">approx</div></div>
+    <div class="metric-card"><div class="metric-label">Gold ATH</div><div class="metric-val">$5,597</div><div class="metric-chg" id="gold-from-ath">—</div></div>
     <div class="metric-card"><div class="metric-label">S&P 500</div><div class="metric-val" id="v-sp500">—</div><div class="metric-chg" id="c-sp500">—</div></div>
     <div class="metric-card"><div class="metric-label">Nasdaq</div><div class="metric-val" id="v-nasdaq">—</div><div class="metric-chg" id="c-nasdaq">—</div></div>
     <div class="metric-card"><div class="metric-label">Dow Jones</div><div class="metric-val" id="v-dow">—</div><div class="metric-chg" id="c-dow">—</div></div>
+    <div class="metric-card"><div class="metric-label">10yr UST Yield</div><div class="metric-val">~4.39%</div><div class="metric-chg neutral">Real yield ~1.8%</div></div>
   </div>
 
-  <!-- ═══ SECTION 4: PERFORMANCE BARS ═══ -->
+  <!-- ④ PERFORMANCE BARS -->
   <div class="section-title">⚡ Intraday performance</div>
   <div class="bar-section" style="margin-bottom:20px">
     <div class="bar-row"><span class="bar-label">Nifty 50</span><div class="bar-track"><div class="bar-fill" id="bar-nifty" style="width:0%"></div></div><span class="bar-val" id="bv-nifty">—</span></div>
@@ -260,49 +264,70 @@
     <div class="bar-row"><span class="bar-label">DXY</span><div class="bar-track"><div class="bar-fill" id="bar-dxy" style="width:0%"></div></div><span class="bar-val" id="bv-dxy">—</span></div>
   </div>
 
-  <!-- ═══ SECTION 5: GOLD MACRO ═══ -->
-  <div class="section-title">🥇 Gold macro signals</div>
-  <div class="gold-grid" style="margin-bottom:12px">
-    <div class="gold-card">
-      <div class="gold-name">Real yield</div>
-      <div class="gold-val down" id="gs-realyield">~+1.8%</div>
-      <div style="margin-top:4px"><span class="badge badge-red">Bearish — above 1%</span></div>
-      <div class="meter-track"><div class="meter-fill" style="width:85%;background:var(--red)"></div></div>
+  <!-- ⑤ GOLD MACRO + SCORE -->
+  <div style="display:grid;grid-template-columns:1fr auto;gap:16px;margin-bottom:20px;align-items:start">
+    <div>
+      <div class="section-title">🥇 Gold macro signals</div>
+      <div class="gold-grid">
+        <div class="gold-card">
+          <div class="gold-name">Real yield</div>
+          <div class="gold-val down" id="gs-realyield">~+1.8%</div>
+          <div style="margin-top:4px"><span class="badge badge-red">Bearish — above 1%</span></div>
+          <div class="meter-track"><div class="meter-fill" style="width:85%;background:var(--red)"></div></div>
+        </div>
+        <div class="gold-card">
+          <div class="gold-name">DXY</div>
+          <div class="gold-val" id="gs-dxy">—</div>
+          <div style="margin-top:4px"><span class="badge" id="gb-dxy">Loading...</span></div>
+          <div class="meter-track"><div class="meter-fill" id="gm-dxy" style="width:50%;background:var(--amber)"></div></div>
+        </div>
+        <div class="gold-card">
+          <div class="gold-name">Brent crude</div>
+          <div class="gold-val" id="gs-brent">—</div>
+          <div style="margin-top:4px"><span class="badge" id="gb-brent">Loading...</span></div>
+          <div class="meter-track"><div class="meter-fill" id="gm-brent" style="width:85%;background:var(--red)"></div></div>
+        </div>
+        <div class="gold-card">
+          <div class="gold-name">CB buying</div>
+          <div class="gold-val up">Active</div>
+          <div style="margin-top:4px"><span class="badge badge-green">Bullish ✓</span></div>
+          <div class="meter-track"><div class="meter-fill" style="width:80%;background:var(--green)"></div></div>
+        </div>
+        <div class="gold-card">
+          <div class="gold-name">Gold RSI</div>
+          <div class="gold-val neutral">~33</div>
+          <div style="margin-top:4px"><span class="badge badge-amber">Oversold zone</span></div>
+          <div class="meter-track"><div class="meter-fill" style="width:33%;background:var(--amber)"></div></div>
+        </div>
+        <div class="gold-card">
+          <div class="gold-name">Fed cuts 2026</div>
+          <div class="gold-val down">0 cuts</div>
+          <div style="margin-top:4px"><span class="badge badge-red">Bearish</span></div>
+          <div class="meter-track"><div class="meter-fill" style="width:95%;background:var(--red)"></div></div>
+        </div>
+      </div>
     </div>
-    <div class="gold-card">
-      <div class="gold-name">DXY</div>
-      <div class="gold-val" id="gs-dxy">—</div>
-      <div style="margin-top:4px"><span class="badge" id="gb-dxy">Loading...</span></div>
-      <div class="meter-track"><div class="meter-fill" id="gm-dxy" style="width:50%;background:var(--amber)"></div></div>
-    </div>
-    <div class="gold-card">
-      <div class="gold-name">Brent crude</div>
-      <div class="gold-val" id="gs-brent">—</div>
-      <div style="margin-top:4px"><span class="badge" id="gb-brent">Loading...</span></div>
-      <div class="meter-track"><div class="meter-fill" id="gm-brent" style="width:85%;background:var(--red)"></div></div>
-    </div>
-    <div class="gold-card">
-      <div class="gold-name">CB buying</div>
-      <div class="gold-val up">Active</div>
-      <div style="margin-top:4px"><span class="badge badge-green">Bullish ✓</span></div>
-      <div class="meter-track"><div class="meter-fill" style="width:80%;background:var(--green)"></div></div>
-    </div>
-    <div class="gold-card">
-      <div class="gold-name">Gold RSI</div>
-      <div class="gold-val neutral">~33</div>
-      <div style="margin-top:4px"><span class="badge badge-amber">Oversold zone</span></div>
-      <div class="meter-track"><div class="meter-fill" style="width:33%;background:var(--amber)"></div></div>
-    </div>
-    <div class="gold-card">
-      <div class="gold-name">Fed cuts 2026</div>
-      <div class="gold-val down">0 cuts</div>
-      <div style="margin-top:4px"><span class="badge badge-red">Bearish</span></div>
-      <div class="meter-track"><div class="meter-fill" style="width:95%;background:var(--red)"></div></div>
+    <!-- GOLD SCORE RING -->
+    <div>
+      <div class="section-title">🔵 Reversal score</div>
+      <div class="score-wrap" style="flex-direction:column;align-items:center;padding:16px;min-width:140px">
+        <svg width="80" height="80" viewBox="0 0 60 60">
+          <circle cx="30" cy="30" r="26" fill="none" stroke="var(--bg3)" stroke-width="6"/>
+          <circle id="score-ring" cx="30" cy="30" r="26" fill="none" stroke="var(--amber)"
+            stroke-width="6" stroke-dasharray="163.4" stroke-dashoffset="122.6"
+            stroke-linecap="round" transform="rotate(-90 30 30)"/>
+          <text x="30" y="35" text-anchor="middle" fill="#fff" font-size="14" font-weight="700"
+            font-family="sans-serif" id="score-text">2/6</text>
+        </svg>
+        <div style="text-align:center;margin-top:8px">
+          <div style="font-size:14px;font-weight:700;color:#fff" id="score-heading">Not yet</div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="info-box amber" id="gold-context" style="margin-bottom:20px">Loading gold context...</div>
 
-  <!-- ═══ SECTION 6: BRENT vs WTI ═══ -->
+  <!-- ⑥ BRENT vs WTI -->
   <div class="section-title">🛢 Brent vs WTI — India context</div>
   <div class="signal-box" style="margin-bottom:20px">
     <div class="signal-row"><span class="signal-label"><strong>Brent (UKOIL)</strong> — India's import benchmark</span><span class="badge" id="sig-brent-val">—</span></div>
@@ -311,8 +336,8 @@
     <div class="signal-row"><span class="signal-label">Normal spread range</span><span class="badge badge-blue">$4–$7</span></div>
   </div>
 
-  <!-- ═══ SECTION 7: NIFTY LEVELS ═══ -->
-  <div class="section-title">📐 Nifty 50 levels</div>
+  <!-- ⑦ NIFTY LEVELS -->
+  <div class="section-title">📐 Nifty 50 key levels</div>
   <div class="bar-section" style="margin-bottom:20px;padding:0">
     <table class="levels-table">
       <thead><tr><th>Level</th><th>Price</th><th>Status</th></tr></thead>
@@ -329,8 +354,8 @@
     </table>
   </div>
 
-  <!-- ═══ SECTION 8: GOLD LEVELS ═══ -->
-  <div class="section-title">📐 Gold levels (USD)</div>
+  <!-- ⑧ GOLD LEVELS -->
+  <div class="section-title">📐 Gold key levels (USD)</div>
   <div class="bar-section" style="margin-bottom:20px;padding:0">
     <table class="levels-table">
       <thead><tr><th>Level</th><th>Price</th><th>Status</th></tr></thead>
@@ -345,112 +370,88 @@
     </table>
   </div>
 
-  <!-- ═══ SECTION 9: RECOVERY DOMINO CHAIN ═══ -->
-  <div class="section-title">🔄 Recovery domino chain — <span id="domino-count">0/5</span> flipped</div>
+  <!-- ⑨ RECOVERY DOMINO CHAIN -->
+  <div class="section-title">🔄 Recovery domino chain</div>
   <div class="chain" style="margin-bottom:20px">
     <div class="chain-step">
       <div class="chain-left"><div class="chain-dot" id="cd1" style="background:var(--red)"></div><div class="chain-line" style="background:rgba(239,68,68,0.3)"></div></div>
       <div class="chain-body">
-        <div class="chain-title">Iran de-escalates OR Brent below $105 <span class="badge badge-red" style="font-size:10px;vertical-align:middle" id="cb1">Watch ~Mar 25</span></div>
-        <div class="chain-desc">The master domino. Strait of Hormuz reopening = immediate Brent drop = inflation fear dies.</div>
+        <div class="chain-title">Iran de-escalates OR Brent closes below $105 <span class="badge badge-red" style="font-size:10px;vertical-align:middle" id="cb1">Watch ~Mar 25</span></div>
+        <div class="chain-desc">The master domino. Strait of Hormuz reopening = immediate Brent drop = inflation fear dies. Set Brent alert at $105.</div>
       </div>
     </div>
     <div class="chain-step">
       <div class="chain-left"><div class="chain-dot" id="cd2" style="background:var(--amber)"></div><div class="chain-line" style="background:rgba(245,158,11,0.3)"></div></div>
       <div class="chain-body">
         <div class="chain-title">DXY holds below 100 <span class="badge badge-amber" style="font-size:10px;vertical-align:middle" id="cb2">Borderline</span></div>
-        <div class="chain-desc">DXY below 100 = structural dollar weakness = gold gets a tailwind. Watch daily close.</div>
+        <div class="chain-desc">DXY below 100 = structural dollar weakness = gold gets structural support. Watch daily close.</div>
       </div>
     </div>
     <div class="chain-step">
       <div class="chain-left"><div class="chain-dot" style="background:var(--amber)"></div><div class="chain-line" style="background:rgba(245,158,11,0.3)"></div></div>
       <div class="chain-body">
         <div class="chain-title">US CPI print below 2.4% <span class="badge badge-amber" style="font-size:10px;vertical-align:middle">~Apr 10</span></div>
-        <div class="chain-desc">Most important data point. Soft inflation kills rate-hike fear. Both Nifty and gold rally hard.</div>
+        <div class="chain-desc">Most important data point. Soft inflation kills rate-hike fear. Both markets rally hard on this print.</div>
       </div>
     </div>
     <div class="chain-step">
       <div class="chain-left"><div class="chain-dot" style="background:var(--muted)"></div><div class="chain-line" style="background:rgba(100,116,139,0.3)"></div></div>
       <div class="chain-body">
         <div class="chain-title">Fed signals rate cut at April FOMC <span class="badge badge-amber" style="font-size:10px;vertical-align:middle">Apr 29–30</span></div>
-        <div class="chain-desc">Language shift is enough. "Monitoring downside risks" = front-run the cut. Deploy gold.</div>
+        <div class="chain-desc">Language shift is enough. "Monitoring downside risks" = front-run the cut. Deploy gold allocation.</div>
       </div>
     </div>
     <div class="chain-step">
       <div class="chain-left"><div class="chain-dot" style="background:var(--muted)"></div></div>
       <div class="chain-body" style="padding-bottom:0">
         <div class="chain-title">FII selling reverses to buying <span class="badge badge-red" style="font-size:10px;vertical-align:middle">Not yet</span></div>
-        <div class="chain-desc">When FIIs return to buying — Nifty gaps up 2–3% in a session. Final confirmation to go all-in.</div>
+        <div class="chain-desc">FIIs sold ₹5,518 Cr on Mar 20 alone. When they return to buying — Nifty gaps up 2–3%. Final confirmation.</div>
       </div>
     </div>
   </div>
 
-  <!-- ═══ SECTION 10: ALERT TARGETS ═══ -->
+  <!-- ⑩ ALERT TARGETS -->
   <div class="section-title">🚨 Your alert targets</div>
   <div class="signal-box" style="margin-bottom:20px">
-    <div class="signal-row"><span class="signal-label">Nifty at 22,000</span><span class="badge badge-green">→ Max equity deployment</span></div>
+    <div class="signal-row"><span class="signal-label">Nifty at 22,000</span><span class="badge badge-green">→ Max equity deployment (Tranche 2+3)</span></div>
     <div class="signal-row"><span class="signal-label">Brent crude at $105</span><span class="badge badge-amber">→ Gold Tranche 1 warning</span></div>
     <div class="signal-row"><span class="signal-label">Brent crude at $100</span><span class="badge badge-green">→ Gold Tranche 1 deploy</span></div>
     <div class="signal-row"><span class="signal-label">Brent-WTI spread below $7</span><span class="badge badge-green">→ Geopolitical premium fading</span></div>
     <div class="signal-row"><span class="signal-label">Nifty closes above 22,800</span><span class="badge badge-green">→ Consider Equity Tranche 1</span></div>
-    <div class="signal-row"><span class="signal-label">DXY closes below 98</span><span class="badge badge-green">→ Confirmed dollar weakness</span></div>
+    <div class="signal-row"><span class="signal-label">DXY closes below 98</span><span class="badge badge-green">→ Confirmed dollar weakness = gold buy</span></div>
   </div>
 
-  <!-- ═══ SECTION 11: KEY DATES ═══ -->
+  <!-- ⑪ KEY DATES -->
   <div class="section-title">📅 Key dates</div>
-  <div class="dates-grid" style="margin-bottom:20px">
+  <div class="dates-grid" style="margin-bottom:24px">
     <div class="date-card"><div class="dc-when amber">~Mar 25</div><div class="dc-what">US-Iran ultimatum expires</div><div class="dc-impact down">Escalation risk peak. If no resolution — Brent spikes.</div></div>
-    <div class="date-card"><div class="dc-when neutral">~Apr 10</div><div class="dc-what">US CPI print</div><div class="dc-impact neutral">Below 2.4% = buy signal for both Nifty and gold.</div></div>
-    <div class="date-card"><div class="dc-when">Apr 29–30</div><div class="dc-what">Fed April FOMC</div><div class="dc-impact up">Watch for pivot language. Actual cut not needed.</div></div>
-    <div class="date-card"><div class="dc-when up">Late Mar 2026</div><div class="dc-what">🐾 Enzo's deworming</div><div class="dc-impact up">Don't forget this one.</div></div>
+    <div class="date-card"><div class="dc-when neutral">~Apr 10</div><div class="dc-what">US CPI print</div><div class="dc-impact neutral">Single most important data point. Below 2.4% = buy signal.</div></div>
+    <div class="date-card"><div class="dc-when">Apr 29–30</div><div class="dc-what">Fed April FOMC meeting</div><div class="dc-impact up">Watch for pivot language. Actual cut not needed.</div></div>
+    <div class="date-card"><div class="dc-when up">Late Mar 2026</div><div class="dc-what">🐾 Enzo's deworming due</div><div class="dc-impact up">Don't forget this one.</div></div>
   </div>
 
-  <!-- ═══ GOLD SCORE ═══ -->
-  <div class="section-title">🔵 Gold reversal score</div>
-  <div class="score-wrap" style="margin-bottom:24px">
-    <svg width="60" height="60" viewBox="0 0 60 60">
-      <circle cx="30" cy="30" r="26" fill="none" stroke="var(--bg3)" stroke-width="6"/>
-      <circle id="score-ring" cx="30" cy="30" r="26" fill="none" stroke="var(--amber)" stroke-width="6"
-        stroke-dasharray="163.4" stroke-dashoffset="122.6" stroke-linecap="round"
-        transform="rotate(-90 30 30)"/>
-      <text x="30" y="35" text-anchor="middle" fill="#fff" font-size="14" font-weight="700" font-family="sans-serif" id="score-text">2/6</text>
-    </svg>
-    <div class="score-text">
-      <h3 id="score-heading">Not yet — 2/6</h3>
-      <p>Real yields and oil still hostile. DXY near 100 is an early positive. Need crude below $100 (Brent) for Tranche 1.</p>
-      <p style="margin-top:6px;color:var(--amber)">⚠ <strong>Brent at $113 is the blocker.</strong> India imports Brent, not WTI. Watch Brent — when it closes below $105, that's your Tranche 1 gold entry signal.</p>
-    </div>
-  </div>
-
-</div><!-- end container -->
-
-
+</div>
 <script>
 // ═══════════════════════════════════════
 // CONFIG
-// ═══════════════════════════════════════
-// ═══════════════════════════════════════
-// API CONFIG — Yahoo Finance via allorigins proxy
-// Finnhub key saved for future backend upgrade
-// const FINNHUB_KEY = 'd70g6d1r01qtb4ralh30d70g6d1r01qtb4ralh3g';
 // ═══════════════════════════════════════
 const PROXY = 'https://api.allorigins.win/get?url=';
 const YF = 'https://query1.finance.yahoo.com/v8/finance/chart/';
 
 const SYMBOLS = {
-  nifty:     { sym: '%5ENSEI',     id: 'nifty',     label: 'Nifty 50' },
-  sensex:    { sym: '%5EBSESN',    id: 'sensex',    label: 'Sensex' },
-  banknifty: { sym: '%5ENSENEXT', id: 'banknifty',  label: 'Bank Nifty' },
-  vix:       { sym: '%5EINDIAVIX', id: 'vix',       label: 'India VIX' },
-  sp500:     { sym: '%5EGSPC',     id: 'sp500',     label: 'S&P 500' },
-  nasdaq:    { sym: '%5EIXIC',     id: 'nasdaq',    label: 'Nasdaq' },
-  dow:       { sym: '%5EDJI',      id: 'dow',       label: 'Dow Jones' },
-  usdinr:    { sym: 'USDINR%3DX',  id: 'usdinr',   label: 'USD/INR' },
-  gold:      { sym: 'GC%3DF',      id: 'gold',      label: 'Gold' },
-  silver:    { sym: 'SI%3DF',      id: 'silver',    label: 'Silver' },
-  brent:     { sym: 'BZ%3DF',      id: 'brent',     label: 'Brent Crude' },
-  wti:       { sym: 'CL%3DF',      id: 'wti',       label: 'WTI Crude' },
-  dxy:       { sym: 'DX-Y.NYB',    id: 'dxy',       label: 'DXY' },
+  nifty:     { sym: '%5ENSEI',    id: 'nifty',     label: 'Nifty 50' },
+  sensex:    { sym: '%5EBSESN',   id: 'sensex',    label: 'Sensex' },
+  banknifty: { sym: '%5ENSENEXT', id: 'banknifty', label: 'Bank Nifty' },
+  vix:       { sym: '%5EINDIAVIX',id: 'vix',       label: 'India VIX' },
+  sp500:     { sym: '%5EGSPC',    id: 'sp500',     label: 'S&P 500' },
+  nasdaq:    { sym: '%5EIXIC',    id: 'nasdaq',    label: 'Nasdaq' },
+  dow:       { sym: '%5EDJI',     id: 'dow',       label: 'Dow Jones' },
+  usdinr:    { sym: 'USDINR%3DX', id: 'usdinr',    label: 'USD/INR' },
+  gold:      { sym: 'GC%3DF',     id: 'gold',      label: 'Gold' },
+  silver:    { sym: 'SI%3DF',     id: 'silver',    label: 'Silver' },
+  brent:     { sym: 'BZ%3DF',     id: 'brent',     label: 'Brent Crude' },
+  wti:       { sym: 'CL%3DF',     id: 'wti',       label: 'WTI Crude' },
+  dxy:       { sym: 'DX-Y.NYB',   id: 'dxy',       label: 'DXY' },
 };
 
 let data = {};
@@ -483,13 +484,13 @@ setInterval(updateClock, 1000);
 updateClock();
 
 // ═══════════════════════════════════════
-// FETCH SINGLE SYMBOL — Yahoo Finance proxy
+// FETCH SINGLE SYMBOL
 // ═══════════════════════════════════════
 async function fetchSymbol(sym) {
-  const url = YF + sym + '?interval=1d&range=5d';
-  const proxyUrl = PROXY + encodeURIComponent(url);
+  const url = `${YF}${sym}?interval=1d&range=5d`;
+  const proxyUrl = `${PROXY}${encodeURIComponent(url)}`;
   try {
-    const res = await fetch(proxyUrl);
+    const res = await fetch(proxyUrl, { timeout: 8000 });
     const json = await res.json();
     const parsed = JSON.parse(json.contents);
     const q = parsed?.chart?.result?.[0];
@@ -539,8 +540,7 @@ async function fetchAll(manual = false) {
     fetchErrors = 0;
     dot.className = 'status-dot';
     statusText.textContent = `Live · ${successCount}/${keys.length} feeds`;
-    document.getElementById('last-fetched').textContent =
-      `Updated ${new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })}`;
+    document.getElementById('last-fetched').textContent = `Updated ${new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })}`;
     updateUI();
   } else {
     fetchErrors++;
@@ -600,31 +600,20 @@ function updateUI() {
     setChg('c-nifty', n.chgPct);
     setEl('lvl-nifty-cur', fmt(n.price, 0), n.chgPct >= 0 ? 'level-val up' : 'level-val down');
     setBar('bar-nifty', 'bv-nifty', n.chgPct);
-
-    // Level signals
     const above22800 = n.price >= 22800;
     const above22500 = n.price >= 22500;
     setEl('sig-level', above22800 ? '✓ Above 22,800' : n.price >= 22500 ? '⚠ 22,500–22,800' : '⛔ Below 22,500',
           above22800 ? 'badge badge-green' : n.price >= 22500 ? 'badge badge-amber' : 'badge badge-red');
-
-    // Fall signal
     const isFalling = n.chgPct <= -2;
     setEl('sig-fall', isFalling ? `✓ Yes — ${pct(n.chgPct)}` : `No — ${pct(n.chgPct)}`,
           isFalling ? 'badge badge-green' : 'badge badge-red');
-
-    // From ATH
     const fromATH = ((n.price - 26373) / 26373) * 100;
     setEl('lvl-from-ath', `${pct(fromATH)} from ATH`, 'level-val down');
-
-    // 22500 level badge
     setEl('lvl-22500', above22500 ? '✓ Holding' : '⛔ Broken', above22500 ? 'badge badge-green' : 'badge badge-red');
   }
 
   // SENSEX
-  if (d.sensex) {
-    setEl('v-sensex', fmt(d.sensex.price, 0));
-    setChg('c-sensex', d.sensex.chgPct);
-  }
+  if (d.sensex) { setEl('v-sensex', fmt(d.sensex.price, 0)); setChg('c-sensex', d.sensex.chgPct); }
 
   // BANK NIFTY
   if (d.banknifty) {
@@ -644,31 +633,11 @@ function updateUI() {
     }
   }
 
-  // S&P 500
-  if (d.sp500) {
-    setEl('v-sp500', fmt(d.sp500.price, 0));
-    setChg('c-sp500', d.sp500.chgPct);
-    setBar('bar-sp500', 'bv-sp500', d.sp500.chgPct);
-  }
-
-  // NASDAQ
-  if (d.nasdaq) {
-    setEl('v-nasdaq', fmt(d.nasdaq.price, 0));
-    setChg('c-nasdaq', d.nasdaq.chgPct);
-    setBar('bar-nasdaq', 'bv-nasdaq', d.nasdaq.chgPct);
-  }
-
-  // DOW
-  if (d.dow) {
-    setEl('v-dow', fmt(d.dow.price, 0));
-    setChg('c-dow', d.dow.chgPct);
-  }
-
-  // USD/INR
-  if (d.usdinr) {
-    setEl('v-usdinr', `₹${fmt(d.usdinr.price, 2)}`);
-    setChg('c-usdinr', d.usdinr.chgPct);
-  }
+  // S&P / NASDAQ / DOW
+  if (d.sp500)  { setEl('v-sp500',  fmt(d.sp500.price,  0)); setChg('c-sp500',  d.sp500.chgPct);  setBar('bar-sp500',  'bv-sp500',  d.sp500.chgPct); }
+  if (d.nasdaq) { setEl('v-nasdaq', fmt(d.nasdaq.price, 0)); setChg('c-nasdaq', d.nasdaq.chgPct); setBar('bar-nasdaq', 'bv-nasdaq', d.nasdaq.chgPct); }
+  if (d.dow)    { setEl('v-dow',    fmt(d.dow.price,    0)); setChg('c-dow',    d.dow.chgPct); }
+  if (d.usdinr) { setEl('v-usdinr', `₹${fmt(d.usdinr.price, 2)}`); setChg('c-usdinr', d.usdinr.chgPct); }
 
   // GOLD
   if (d.gold) {
@@ -677,16 +646,12 @@ function updateUI() {
     setEl('lvl-gold-cur', `$${fmt(d.gold.price, 0)}`, d.gold.chgPct >= 0 ? 'level-val up' : 'level-val down');
     const fromAthG = ((d.gold.price - 5597) / 5597) * 100;
     setEl('gold-from-ath', `${pct(fromAthG)} from ATH`, 'metric-chg down');
-    // MCX approx (gold USD * 90 / 31.1035 for 10g, approx)
     const mcxApprox = Math.round(d.gold.price * 90 / 31.1035 * 10) / 10;
     setEl('v-mcxgold', `₹${Math.round(mcxApprox).toLocaleString('en-IN')}`);
   }
 
   // SILVER
-  if (d.silver) {
-    setEl('v-silver', `$${fmt(d.silver.price, 2)}`);
-    setChg('c-silver', d.silver.chgPct);
-  }
+  if (d.silver) { setEl('v-silver', `$${fmt(d.silver.price, 2)}`); setChg('c-silver', d.silver.chgPct); }
 
   // BRENT
   if (d.brent) {
@@ -699,22 +664,17 @@ function updateUI() {
     const brentBelow100 = b.price < 100;
     setEl('gb-brent', brentBelow100 ? '✓ Below $100 — Tranche 1!' : brentBelow105 ? '⚠ Approaching $100' : `⛔ $${fmt(b.price,2)} — too high`,
           brentBelow100 ? 'badge badge-green' : brentBelow105 ? 'badge badge-amber' : 'badge badge-red');
-    document.getElementById('gm-brent').style.width = `${Math.min((b.price / 130) * 100, 100)}%`;
-    document.getElementById('gm-brent').style.background = brentBelow100 ? 'var(--green)' : brentBelow105 ? 'var(--amber)' : 'var(--red)';
-
-    // Signals tab
+    const gmb = document.getElementById('gm-brent');
+    if (gmb) { gmb.style.width = `${Math.min((b.price/130)*100,100)}%`; gmb.style.background = brentBelow100?'var(--green)':brentBelow105?'var(--amber)':'var(--red)'; }
     setEl('sig-brent', brentBelow100 ? '✓ Below $100 — deploy gold' : `⛔ $${fmt(b.price,2)} — wait`,
           brentBelow100 ? 'badge badge-green' : 'badge badge-red');
-    setEl('sig-brent-val', `$${fmt(b.price,2)} (India benchmark)`,
-          b.price > 105 ? 'badge badge-red' : 'badge badge-amber');
-    setEl('sig-oil', brentBelow105 ? '✓ Approaching' : '⛔ No — $' + fmt(b.price,2),
+    setEl('sig-brent-val', `$${fmt(b.price,2)} (India benchmark)`, b.price > 105 ? 'badge badge-red' : 'badge badge-amber');
+    setEl('sig-oil', brentBelow105 ? `⚠ $${fmt(b.price,2)} — approaching` : `⛔ $${fmt(b.price,2)} — too high`,
           brentBelow105 ? 'badge badge-amber' : 'badge badge-red');
-
-    // Recovery chain domino 1
-    if (brentBelow105) {
-      document.getElementById('cd1').style.background = 'var(--amber)';
-      setEl('cb1', '⚠ Approaching!', 'badge badge-amber');
-    }
+    // Domino 1
+    const cd1 = document.getElementById('cd1');
+    if (cd1) cd1.style.background = brentBelow105 ? 'var(--amber)' : 'var(--red)';
+    setEl('cb1', brentBelow105 ? '⚠ Approaching $105!' : 'Watch ~Mar 25', brentBelow105 ? 'badge badge-amber' : 'badge badge-red');
   }
 
   // WTI
@@ -729,9 +689,8 @@ function updateUI() {
   // BRENT-WTI SPREAD
   if (d.brent && d.wti) {
     const spread = d.brent.price - d.wti.price;
-    const spreadNormal = spread <= 7;
-    setEl('sig-spread', `$${fmt(spread,2)} ${spread > 10 ? '⚠ War premium elevated' : ''}`,
-          spreadNormal ? 'badge badge-green' : spread < 10 ? 'badge badge-amber' : 'badge badge-red');
+    setEl('sig-spread', `$${fmt(spread,2)}${spread > 10 ? ' ⚠ War premium elevated' : ''}`,
+          spread <= 7 ? 'badge badge-green' : spread < 10 ? 'badge badge-amber' : 'badge badge-red');
   }
 
   // DXY
@@ -745,16 +704,14 @@ function updateUI() {
     setEl('gs-dxy', fmt(dx.price, 2), dxyBelow100 ? 'gold-val up' : 'gold-val neutral');
     setEl('gb-dxy', dxyBelow100 ? '✓ Below 100 — bullish gold' : dxyBelow102 ? '⚠ Near 100' : `⛔ ${fmt(dx.price,2)} — headwind`,
           dxyBelow100 ? 'badge badge-green' : dxyBelow102 ? 'badge badge-amber' : 'badge badge-red');
-    document.getElementById('gm-dxy').style.width = `${Math.min(((110 - dx.price) / 20) * 100, 100)}%`;
-    document.getElementById('gm-dxy').style.background = dxyBelow100 ? 'var(--green)' : 'var(--amber)';
+    const gmd = document.getElementById('gm-dxy');
+    if (gmd) { gmd.style.width = `${Math.min(((110-dx.price)/20)*100,100)}%`; gmd.style.background = dxyBelow100?'var(--green)':'var(--amber)'; }
     setEl('sig-dxy', dxyBelow100 ? '✓ Below 100' : `⛔ ${fmt(dx.price,2)}`,
           dxyBelow100 ? 'badge badge-green' : 'badge badge-red');
-
-    // Recovery chain domino 2
-    if (dxyBelow100) {
-      document.getElementById('cd2').style.background = 'var(--amber)';
-      setEl('cb2', '⚠ At 100 — watching', 'badge badge-amber');
-    }
+    // Domino 2
+    const cd2 = document.getElementById('cd2');
+    if (cd2) cd2.style.background = dxyBelow100 ? 'var(--amber)' : 'var(--muted)';
+    setEl('cb2', dxyBelow100 ? '⚠ At 100 — watching' : 'Borderline', dxyBelow100 ? 'badge badge-amber' : 'badge badge-blue');
   }
 
   updateGoldScore();
@@ -762,6 +719,7 @@ function updateUI() {
   updateEquityContext();
   updateGoldContext();
   updateSignalVerdict();
+  updateDominoCount();
 }
 
 // ═══════════════════════════════════════
@@ -774,23 +732,33 @@ function updateGoldScore() {
   if (d.brent && d.brent.price < 100) score++;
   score += 1; // CB buying always active
   score += 1; // Gold ETF flows positive
-  // Real yield — always bearish right now
-  // Fed — always bearish right now
-
   const total = 6;
   const ring = document.getElementById('score-ring');
   const circumference = 163.4;
   const offset = circumference - (score / total) * circumference;
-  if (ring) ring.setAttribute('stroke-dashoffset', offset.toFixed(1));
+  if (ring) {
+    ring.setAttribute('stroke-dashoffset', offset.toFixed(1));
+    const colors = ['var(--red)','var(--red)','var(--amber)','var(--amber)','var(--green)','var(--green)'];
+    ring.setAttribute('stroke', colors[Math.min(score, colors.length-1)]);
+  }
   setEl('score-text', `${score}/${total}`);
-  setEl('score-heading', score <= 2 ? `Not yet — ${score}/${total}` : score <= 3 ? `Building — ${score}/${total}` : `✓ Getting close — ${score}/${total}`);
-
-  const colors = ['var(--red)', 'var(--red)', 'var(--amber)', 'var(--amber)', 'var(--green)', 'var(--green)'];
-  if (ring) ring.setAttribute('stroke', colors[Math.min(score, colors.length - 1)]);
+  setEl('score-heading', score <= 2 ? `Not yet — ${score}/${total}` : score <= 4 ? `Building — ${score}/${total}` : `✓ Getting close — ${score}/${total}`);
 }
 
 // ═══════════════════════════════════════
-// MAIN VERDICT BANNER
+// DOMINO CHAIN COUNT
+// ═══════════════════════════════════════
+function updateDominoCount() {
+  const d = data;
+  let count = 0;
+  if (d.brent && d.brent.price < 105) count++;
+  if (d.dxy && d.dxy.price < 100) count++;
+  // CPI + Fed + FII = static for now (not live data)
+  setEl('domino-count', `${count}/5`);
+}
+
+// ═══════════════════════════════════════
+// VERDICT BANNER
 // ═══════════════════════════════════════
 function updateVerdictBanner() {
   const d = data;
@@ -798,20 +766,19 @@ function updateVerdictBanner() {
   const brent = d.brent?.price;
   const banner = document.getElementById('verdict-banner');
   const text = document.getElementById('verdict-text');
-
+  if (!banner || !text) return;
   if (nifty && nifty < 22000) {
     banner.className = 'verdict green';
-    text.textContent = '🚨 Nifty below 22,000 — MAXIMUM opportunity window. Deploy Tranche 2+3 in NIFTYBEES NOW.';
-    document.getElementById('verdict-icon')?.remove?.();
+    text.textContent = '🚨 Nifty below 22,000 — MAXIMUM opportunity. Deploy Tranche 2+3 in NIFTYBEES NOW.';
   } else if (nifty && nifty < 22500 && brent && brent > 105) {
     banner.className = 'verdict red';
-    text.textContent = `⛔ No buying today — Nifty at ${fmt(nifty,0)} (below 22,500 support) + Brent at $${fmt(brent,2)} (above $105). Keep powder dry.`;
+    text.textContent = `⛔ No buying — Nifty at ${fmt(nifty,0)} (below support) + Brent $${fmt(brent,2)} (above $105). Powder dry.`;
   } else if (nifty && nifty < 22800) {
     banner.className = 'verdict amber';
-    text.textContent = `⚠ Caution — Nifty at ${fmt(nifty,0)} (below 22,800). Watch for bounce above 22,800 before committing Tranche 1.`;
+    text.textContent = `⚠ Caution — Nifty at ${fmt(nifty,0)}. Wait for close above 22,800 before Tranche 1.`;
   } else if (nifty && nifty >= 22800) {
     banner.className = 'verdict amber';
-    text.textContent = `⚠ Nifty recovering to ${fmt(nifty,0)}. Wait for confirmed close above 22,800 for 2 consecutive days before Tranche 1.`;
+    text.textContent = `⚠ Nifty at ${fmt(nifty,0)}. Wait for 2 consecutive closes above 22,800 before Tranche 1.`;
   } else {
     banner.className = 'verdict red';
     text.textContent = 'Loading market data...';
@@ -824,55 +791,47 @@ function updateVerdictBanner() {
 function updateEquityContext() {
   const d = data;
   const box = document.getElementById('equity-context');
-  if (!d.nifty || !d.brent) return;
-  const n = d.nifty.price;
-  const b = d.brent.price;
+  if (!box || !d.nifty || !d.brent) return;
+  const n = d.nifty.price, b = d.brent.price;
   const level = n < 22000 ? 'at MAX opportunity zone — deploy Tranche 2+3' :
                 n < 22500 ? 'below critical 22,500 support — DO NOT deploy' :
                 n < 22800 ? 'between 22,500–22,800 — wait for recovery confirmation' :
                 'recovering toward resistance';
-  box.innerHTML = `<strong>Market context:</strong> Nifty at ${fmt(n,0)} — ${level}. Brent crude at $${fmt(b,2)} — India's actual import price. ${b > 105 ? 'Inflation fear remains active.' : 'Watch for continued crude easing.'}`;
+  box.innerHTML = `<strong>Market context:</strong> Nifty at ${fmt(n,0)} — ${level}. Brent crude at $${fmt(b,2)} — India's actual import price. ${b > 105 ? 'Inflation fear remains active.' : 'Crude easing — positive signal.'}`;
   box.className = `info-box ${n < 22000 ? 'green' : n < 22500 ? 'red' : 'amber'}`;
 }
 
 function updateGoldContext() {
   const d = data;
   const box = document.getElementById('gold-context');
-  if (!d.brent || !d.dxy) return;
-  const b = d.brent.price;
-  const dx = d.dxy.price;
-  const bOk = b < 105;
-  const dxOk = dx < 100;
+  if (!box || !d.brent || !d.dxy) return;
+  const b = d.brent.price, dx = d.dxy.price;
+  const bOk = b < 105, dxOk = dx < 100;
   if (bOk && dxOk) {
-    box.innerHTML = '<strong>Both Brent and DXY are in buy zone.</strong> Consider Tranche 1 in Nippon Gold BeES or SGB secondary market now.';
+    box.innerHTML = '<strong>Both Brent and DXY in buy zone.</strong> Consider Tranche 1 in Nippon Gold BeES or SGB secondary market now.';
     box.className = 'info-box green';
   } else if (dxOk) {
-    box.innerHTML = `<strong>DXY below 100 ✓</strong> — bullish for gold. But Brent at $${fmt(b,2)} still too high. Wait for Brent below $105 for Tranche 1.`;
+    box.innerHTML = `<strong>DXY below 100 ✓</strong> — bullish for gold. Brent at $${fmt(b,2)} still too high. Wait for Brent below $105 for Tranche 1.`;
     box.className = 'info-box amber';
   } else {
-    box.innerHTML = `<strong>Not yet.</strong> Brent at $${fmt(b,2)} (need &lt;$105) and DXY at ${fmt(dx,2)} (need &lt;100). Both blockers active. Keep gold allocation in cash.`;
+    box.innerHTML = `<strong>Not yet.</strong> Brent $${fmt(b,2)} (need &lt;$105) · DXY ${fmt(dx,2)} (need &lt;100). Both blockers active. Stay in cash.`;
     box.className = 'info-box red';
   }
 }
 
 function updateSignalVerdict() {
   const d = data;
-  const n = d.nifty;
-  const b = d.brent;
+  const n = d.nifty, b = d.brent;
   if (!n || !b) return;
-
-  const falling = n.chgPct <= -2;
   const above22800 = n.price >= 22800;
   const brentOk = b.price < 105;
-  const niftyScore = [falling, above22800, brentOk].filter(Boolean).length;
   setEl('sig-nifty-verdict',
-    above22800 && brentOk ? '⚠ Tranche 1 possible — verify time' :
     n.price < 22000 ? '✅ MAX opportunity — deploy now' :
+    above22800 && brentOk ? '⚠ Tranche 1 possible — verify time' :
     '⛔ Wait — conditions not met',
-    above22800 && brentOk ? 'badge badge-amber' :
-    n.price < 22000 ? 'badge badge-green' : 'badge badge-red'
+    n.price < 22000 ? 'badge badge-green' :
+    above22800 && brentOk ? 'badge badge-amber' : 'badge badge-red'
   );
-
   const dxy = d.dxy;
   const goldScore = [dxy?.price < 100, b.price < 100].filter(Boolean).length + 2;
   setEl('sig-gold-verdict',
@@ -881,19 +840,6 @@ function updateSignalVerdict() {
     '⛔ Wait — macro not ready',
     goldScore >= 4 ? 'badge badge-green' : goldScore >= 3 ? 'badge badge-amber' : 'badge badge-red'
   );
-  setEl('sig-broad', '⚠ Broad selloff — all sectors down', 'badge badge-red');
-}
-
-// ═══════════════════════════════════════
-// TAB SWITCHING
-// ═══════════════════════════════════════
-function showTab(id) {
-  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
-    const ids = ['equity', 'gold', 'signals', 'levels', 'watch'];
-    btn.classList.toggle('active', ids[i] === id);
-  });
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
 }
 
 // ═══════════════════════════════════════
@@ -909,7 +855,7 @@ function isMarketHours() {
 
 refreshInterval = setInterval(() => {
   fetchAll(false);
-}, 60000);
+}, 30000);
 
 // INITIAL FETCH
 fetchAll(true);
